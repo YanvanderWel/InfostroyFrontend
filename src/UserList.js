@@ -14,7 +14,7 @@ function UserList(props) {
   return (
     <ul style={styles.ul}>
       {props.users.map((user, index) => {
-        console.log('TODOLIST', user)
+        // console.log('TODOLIST', user)
         return (
           <UserItem
             user={user}

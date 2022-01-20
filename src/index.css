@@ -18,6 +18,12 @@ code {
   width: 600px;
 }
 
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .rm {
   background: red;
   border-radius: 50%;

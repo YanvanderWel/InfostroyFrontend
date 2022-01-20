@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { loginUser } from "./util/ws";
+import { useNavigate } from "react-router-dom";
+import { saveName } from "./util/localstorage";
 
 function useInputValue(defaultValue = "") {
   const [value, setValue] = useState(defaultValue);
@@ -15,19 +17,30 @@ function useInputValue(defaultValue = "") {
 }
 
 function Login() {
+  const navigate = useNavigate();
+
   const input = useInputValue("");
   function loginHandler(event) {
     event.preventDefault();
 
     loginUser({ name: input.value() });
-    input.clear();
+    saveName(input.value())
+    navigate("/members");
   }
 
   return (
-    <form onSubmit={loginHandler}>
-      <input {...input.bind} />
-      <button type="submit">Login</button>
-    </form>
+    <div className="login-wrapper">
+      <form onSubmit={loginHandler}>
+        <label>
+          <p>Your name:</p>
+          <input {...input.bind} />
+        </label>
+
+        <div>
+          <button type="submit">Login</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
