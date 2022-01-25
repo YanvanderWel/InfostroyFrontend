@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Emoji from "./util/emoji";
 
 const styles = {
   li: {
@@ -16,20 +17,23 @@ const styles = {
   },
 };
 
-function UserItem({ user, onChange }) {
+function UserItem({ user }) {
   return (
     <li style={styles.li}>
       {user.name}
-      <button onClick={() => onChange(user.name)}>
-        {user.isHandRaised ? "Hand raised" : "Hand down"}
-      </button>
+      <div>
+        {user.handRaised ? (
+          <Emoji symbol="0x270b"></Emoji>
+        ) : (
+          ""
+        )}
+      </div>
     </li>
   );
 }
 
 UserItem.propTypes = {
   user: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
 };
 
 export default UserItem;

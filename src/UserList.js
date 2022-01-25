@@ -14,13 +14,11 @@ function UserList(props) {
   return (
     <ul style={styles.ul}>
       {props.users.map((user, index) => {
-        // console.log('TODOLIST', user)
         return (
           <UserItem
             user={user}
             key={user.name}
             index={index}
-            onChange={props.onToggle}
           />
         );
       })}
@@ -31,7 +29,6 @@ function UserList(props) {
 UserList.propTypes = {
   users: PropTypes.arrayOf(PropTypes.object).isRequired,
   index: PropTypes.number,
-  onToggle: PropTypes.func.isRequired,
 };
 
 export default UserList;

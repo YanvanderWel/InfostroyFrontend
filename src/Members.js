@@ -1,60 +1,49 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserList from "./UserList";
-import { addHandHandler, addHandler, addLogoutHandler } from "./util/ws";
+import {
+  addHandHandler,
+  addJoinGroupHandler,
+  addLogoutHandler,
+} from "./util/ws";
 
 function Memebers() {
-  const [users, setUsers] = React.useState([]);
-  const stateRef = useRef();
-
-  stateRef.current = users;
+  const [users, setUsers] = useState([]);
+  const isMounted = useRef(false);
 
   useEffect(() => {
+    isMounted.current = true;
     fetch("http://localhost:8080/api/user/all")
       .then((response) => response.json())
       .then((users_) => {
         setUsers(users_);
       });
 
-    addHandler((data) => {
-      console.log("Our object:", data);
-      setUsers(stateRef.current.concat([data]));
-    //   setTimeout(() => {
-    //     alert(data.name + " signed in.");
-    //   }, 2000);
-      console.log("Users:", stateRef.current);
+    addJoinGroupHandler((data) => {
+      if (isMounted.current) {
+        setUsers(data);
+      }
     });
 
     addLogoutHandler((data) => {
-      setUsers((stateRef.current = data));
-    //   setTimeout(() => {
-    //     alert(data.name + " signed out.");
-    //   }, 2000);
+      if (isMounted.current) {
+        setUsers(data);
+      }
     });
 
     addHandHandler((data) => {
-      setUsers((stateRef.current = data));
+      if (isMounted.current) {
+        setUsers(data);
+      }
     });
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
-
-  function toggleHand(name) {
-    setUsers(
-      users.map((user) => {
-        if (user.name === name) {
-          user.isHandRaised = !user.isHandRaised;
-        }
-        return user;
-      })
-    );
-  }
 
   return (
     <div>
       <h3>Class members</h3>
-      {users.length ? (
-        <UserList users={users} onToggle={toggleHand}></UserList>
-      ) : (
-        <p>No users!</p>
-      )}
+      {users.length ? <UserList users={users}></UserList> : <p>No users!</p>}
     </div>
   );
 }

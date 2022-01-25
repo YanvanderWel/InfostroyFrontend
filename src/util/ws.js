@@ -2,9 +2,9 @@ import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
 var stompClient = null;
-const loginHandlers = [];
-const handHandlers = []
-const logoutHandlers = []
+const joinGroupHandlers = [];
+const handHandlers = [];
+const logoutHandlers = [];
 
 export function connect() {
   var socket = new SockJS("http://localhost:8080/gs-guide-websocket");
@@ -12,23 +12,22 @@ export function connect() {
 
   stompClient.connect({}, (frame) => {
     console.log("Connected: " + frame);
-    stompClient.subscribe("/topic/chat", (user) => {
-      loginHandlers.forEach((handler) => handler(JSON.parse(user.body).body));
+    stompClient.subscribe("/topic/chat", (users) => {
+      joinGroupHandlers.forEach((handler) => handler(JSON.parse(users.body)));
     });
 
     stompClient.subscribe("/topic/hand", (user) => {
-        handHandlers.forEach((handler) => handler(JSON.parse(user.body)));
+      handHandlers.forEach((handler) => handler(JSON.parse(user.body)));
     });
 
     stompClient.subscribe("/topic/logout", (users) => {
-      console.log('USSERS:', users)
-        logoutHandlers.forEach((handler) => handler(JSON.parse(users.body)));
+      logoutHandlers.forEach((handler) => handler(JSON.parse(users.body)));
     });
   });
 }
 
-export function addHandler(handler) {
-  loginHandlers.push(handler);
+export function addJoinGroupHandler(handler) {
+  joinGroupHandlers.push(handler);
 }
 
 export function addHandHandler(handler) {
@@ -46,8 +45,8 @@ export function disconnect() {
   console.log("Disconnected");
 }
 
-export function loginUser(user) {
-  stompClient.send("/app/new", {}, JSON.stringify(user));
+export function joinTheGroup() {
+  stompClient.send("/app/joinTheGroup");
 }
 
 export function changeHandPosition(user) {

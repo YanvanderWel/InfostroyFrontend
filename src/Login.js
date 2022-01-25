@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { loginUser } from "./util/ws";
+import { joinTheGroup } from "./util/ws";
 import { useNavigate } from "react-router-dom";
 import { saveName } from "./util/localstorage";
+import { loginUser } from "./util/backendApi";
 
 function useInputValue(defaultValue = "") {
   const [value, setValue] = useState(defaultValue);
@@ -17,15 +18,25 @@ function useInputValue(defaultValue = "") {
 }
 
 function Login() {
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+
   const navigate = useNavigate();
 
   const input = useInputValue("");
   function loginHandler(event) {
     event.preventDefault();
 
-    loginUser({ name: input.value() });
-    saveName(input.value())
-    navigate("/members");
+    const data = loginUser({ name: input.value() });
+
+    data.then((response) => {
+      if (response.data === "Edit your name.") {
+        setShowErrorMessage(true);
+      } else {
+        joinTheGroup()
+        saveName(input.value());
+        navigate("/members");
+      }
+    });
   }
 
   return (
@@ -39,6 +50,11 @@ function Login() {
         <div>
           <button type="submit">Login</button>
         </div>
+        {showErrorMessage && (
+          <div>
+            <p>Such name already exists!</p>
+          </div>
+        )}
       </form>
     </div>
   );
